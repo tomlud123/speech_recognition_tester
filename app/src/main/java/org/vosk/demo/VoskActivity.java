@@ -20,6 +20,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -40,7 +41,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class VoskActivity extends Activity implements
-        RecognitionListener {
+        RecognitionListener { //TODO recognitionListener selbst schreiben
 
     static private final int STATE_START = 0;
     static private final int STATE_READY = 1;
@@ -55,6 +56,7 @@ public class VoskActivity extends Activity implements
     private SpeechService speechService;
     private SpeechStreamService speechStreamService;
     private TextView resultView;
+    private Spinner spin;
 
     @Override
     public void onCreate(Bundle state) {
@@ -68,6 +70,8 @@ public class VoskActivity extends Activity implements
         findViewById(R.id.recognize_file).setOnClickListener(view -> recognizeFile());
         findViewById(R.id.recognize_mic).setOnClickListener(view -> recognizeMicrophone());
         ((ToggleButton) findViewById(R.id.pause)).setOnCheckedChangeListener((view, isChecked) -> pause(isChecked));
+        this.spin = (Spinner) findViewById(R.id.spinner);
+        new VoskModelSpinnerListener(this, this.spin);
 
         LibVosk.setLogLevel(LogLevel.INFO);
 
@@ -244,5 +248,4 @@ public class VoskActivity extends Activity implements
             speechService.setPause(checked);
         }
     }
-
 }

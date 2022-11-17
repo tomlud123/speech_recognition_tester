@@ -4,6 +4,14 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="16dp">
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:spinnerMode="dropdown" />
+
     <Button
         android:id="@+id/recognize_file"
         android:layout_width="match_parent"
