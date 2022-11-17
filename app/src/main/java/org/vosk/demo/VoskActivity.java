@@ -19,9 +19,13 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import org.vosk.LibVosk;
@@ -41,7 +45,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class VoskActivity extends Activity implements
-        RecognitionListener { //TODO recognitionListener selbst schreiben
+        RecognitionListener, AdapterView.OnItemSelectedListener { //TODO recognitionListener selbst schreiben
 
     static private final int STATE_START = 0;
     static private final int STATE_READY = 1;
@@ -52,6 +56,9 @@ public class VoskActivity extends Activity implements
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
+    private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15"};
+
+    private String modelName = "model-en-us";
     private Model model;
     private SpeechService speechService;
     private SpeechStreamService speechStreamService;
@@ -71,7 +78,10 @@ public class VoskActivity extends Activity implements
         findViewById(R.id.recognize_mic).setOnClickListener(view -> recognizeMicrophone());
         ((ToggleButton) findViewById(R.id.pause)).setOnCheckedChangeListener((view, isChecked) -> pause(isChecked));
         this.spin = (Spinner) findViewById(R.id.spinner);
-        new VoskModelSpinnerListener(this, this.spin);
+        this.spin.setOnItemSelectedListener(this);
+        ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, MODELS);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(aa);
 
         LibVosk.setLogLevel(LogLevel.INFO);
 
@@ -85,7 +95,7 @@ public class VoskActivity extends Activity implements
     }
 
     private void initModel() {
-        StorageService.unpack(this, "model-en-us", "model",
+        StorageService.unpack(this, modelName, "model",
                 (model) -> {
                     this.model = model;
                     setUiState(STATE_READY);
@@ -210,8 +220,10 @@ public class VoskActivity extends Activity implements
         } else {
             setUiState(STATE_FILE);
             try {
-                Recognizer rec = new Recognizer(model, 16000.f, "[\"one zero zero zero one\", " +
-                        "\"oh zero one two three four five six seven eight nine\", \"[unk]\"]");
+//                Recognizer rec = new Recognizer(model, 16000.f, "[\"one zero zero zero one\", " +
+//                        "\"oh zero one two three four five six seven eight nine\", \"[unk]\", \"[one]\", \"[zero]\"]");
+
+                Recognizer rec = new Recognizer(model, 16000.0f);
 
                 InputStream ais = getAssets().open(
                         "10001-90210-01803.wav");
@@ -247,5 +259,38 @@ public class VoskActivity extends Activity implements
         if (speechService != null) {
             speechService.setPause(checked);
         }
+    }
+
+    /**
+     * <p>Callback method to be invoked when an item in this view has been
+     * selected. This callback is invoked only when the newly selected
+     * position is different from the previously selected position or if
+     * there was no selected item.</p>
+     * <p>
+     * Implementers can call getItemAtPosition(position) if they need to access the
+     * data associated with the selected item.
+     *
+     * @param parent   The AdapterView where the selection happened
+     * @param view     The view within the AdapterView that was clicked
+     * @param position The position of the view in the adapter
+     * @param id       The row id of the item that is selected
+     */
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(this, MODELS[position]+" chosen", Toast.LENGTH_LONG).show();
+        modelName = MODELS[position];
+        initModel();
+    }
+
+    /**
+     * Callback method to be invoked when the selection disappears from this
+     * view. The selection can disappear for instance when touch is activated
+     * or when the adapter becomes empty.
+     *
+     * @param parent The AdapterView that now contains no selected item.
+     */
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        //do nothing
     }
 }

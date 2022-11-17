@@ -22,7 +22,7 @@ tasks.register('genUUID') {
     def ofile = file("$odir/uuid")
     def uuid2 = UUID.randomUUID().toString()
     def odir2 = file("$buildDir/generated/assets/vosk-model-small-de-0.15")
-    def ofile2 = file("$odir/uuid")
+    def ofile2 = file("$odir2/uuid2")
     doLast {
         mkdir odir
         ofile.text = uuid
