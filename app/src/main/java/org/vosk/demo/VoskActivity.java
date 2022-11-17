@@ -56,7 +56,7 @@ public class VoskActivity extends Activity implements
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
-    private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15"};
+    private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15", "vosk-model-en-us-0.22-lgraph"};
 
     private String modelName = "model-en-us";
     private Model model;
@@ -150,7 +150,7 @@ public class VoskActivity extends Activity implements
 
     @Override
     public void onPartialResult(String hypothesis) {
-        resultView.append(hypothesis + "\n");
+//        resultView.append(hypothesis + "\n");
     }
 
     @Override
@@ -280,6 +280,7 @@ public class VoskActivity extends Activity implements
         Toast.makeText(this, MODELS[position]+" chosen", Toast.LENGTH_LONG).show();
         modelName = MODELS[position];
         initModel();
+        setUiState(STATE_START);
     }
 
     /**
