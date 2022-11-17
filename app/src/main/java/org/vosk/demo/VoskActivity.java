@@ -56,7 +56,7 @@ public class VoskActivity extends Activity implements
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
-    private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15", "vosk-model-en-us-0.22-lgraph"};
+    private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15", "vosk-model-en-us-0.22-lgraph", "vosk-model-small-en-us-zamia-0.5"};
 
     private String modelName = "model-en-us";
     private Model model;
@@ -150,7 +150,7 @@ public class VoskActivity extends Activity implements
 
     @Override
     public void onPartialResult(String hypothesis) {
-//        resultView.append(hypothesis + "\n");
+        resultView.append(hypothesis + "\n");
     }
 
     @Override
@@ -185,6 +185,7 @@ public class VoskActivity extends Activity implements
                 findViewById(R.id.recognize_file).setEnabled(true);
                 findViewById(R.id.recognize_mic).setEnabled(true);
                 findViewById(R.id.pause).setEnabled((false));
+                findViewById(R.id.spinner).setEnabled((true));
                 break;
             case STATE_FILE:
                 ((Button) findViewById(R.id.recognize_file)).setText(R.string.stop_file);
@@ -192,6 +193,7 @@ public class VoskActivity extends Activity implements
                 findViewById(R.id.recognize_mic).setEnabled(false);
                 findViewById(R.id.recognize_file).setEnabled(true);
                 findViewById(R.id.pause).setEnabled((false));
+                findViewById(R.id.spinner).setEnabled((false));
                 break;
             case STATE_MIC:
                 ((Button) findViewById(R.id.recognize_mic)).setText(R.string.stop_microphone);
@@ -199,6 +201,7 @@ public class VoskActivity extends Activity implements
                 findViewById(R.id.recognize_file).setEnabled(false);
                 findViewById(R.id.recognize_mic).setEnabled(true);
                 findViewById(R.id.pause).setEnabled((true));
+                findViewById(R.id.spinner).setEnabled((false));
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + state);
