@@ -14,6 +14,8 @@
 
 package org.vosk.demo;
 
+import static org.vosk.demo.SrActivityState.*;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -45,13 +47,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class VoskActivity extends Activity implements
-        RecognitionListener, AdapterView.OnItemSelectedListener { //TODO recognitionListener selbst schreiben
-
-    static private final int STATE_START = 0;
-    static private final int STATE_READY = 1;
-    static private final int STATE_DONE = 2;
-    static private final int STATE_FILE = 3;
-    static private final int STATE_MIC = 4;
+        RecognitionListener, AdapterView.OnItemSelectedListener {
 
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
@@ -68,15 +64,15 @@ public class VoskActivity extends Activity implements
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_vosk);
 
         // Setup layout
         resultView = findViewById(R.id.result_text);
         setUiState(STATE_START);
 
-        findViewById(R.id.recognize_file).setOnClickListener(view -> recognizeFile());
-        findViewById(R.id.recognize_mic).setOnClickListener(view -> recognizeMicrophone());
-        ((ToggleButton) findViewById(R.id.pause)).setOnCheckedChangeListener((view, isChecked) -> pause(isChecked));
+        findViewById(R.id.btnFile).setOnClickListener(view -> recognizeFile());
+        findViewById(R.id.btnMic).setOnClickListener(view -> recognizeMicrophone());
+        ((ToggleButton) findViewById(R.id.btnPause)).setOnCheckedChangeListener((view, isChecked) -> pause(isChecked));
         this.spin = (Spinner) findViewById(R.id.spinner);
         this.spin.setOnItemSelectedListener(this);
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, MODELS);
@@ -85,13 +81,7 @@ public class VoskActivity extends Activity implements
 
         LibVosk.setLogLevel(LogLevel.INFO);
 
-        // Check if user has given permission to record audio, init the model after permission is granted
-        int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-        } else {
-            initModel();
-        }
+        initModel();
     }
 
     private void initModel() {
@@ -104,21 +94,21 @@ public class VoskActivity extends Activity implements
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Recognizer initialization is a time-consuming and it involves IO,
-                // so we execute it in async task
-                initModel();
-            } else {
-                finish();
-            }
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Recognizer initialization is a time-consuming and it involves IO,
+//                // so we execute it in async task
+//                initModel();
+//            } else {
+//                finish();
+//            }
+//        }
+//    }
 
     @Override
     public void onDestroy() {
@@ -163,44 +153,44 @@ public class VoskActivity extends Activity implements
         setUiState(STATE_DONE);
     }
 
-    private void setUiState(int state) {
+    private void setUiState(SrActivityState state) {
         switch (state) {
             case STATE_START:
                 resultView.setText(R.string.preparing);
                 resultView.setMovementMethod(new ScrollingMovementMethod());
-                findViewById(R.id.recognize_file).setEnabled(false);
-                findViewById(R.id.recognize_mic).setEnabled(false);
-                findViewById(R.id.pause).setEnabled((false));
+                findViewById(R.id.btnFile).setEnabled(false);
+                findViewById(R.id.btnMic).setEnabled(false);
+                findViewById(R.id.btnPause).setEnabled((false));
                 break;
             case STATE_READY:
                 resultView.setText(R.string.ready);
-                ((Button) findViewById(R.id.recognize_mic)).setText(R.string.recognize_microphone);
-                findViewById(R.id.recognize_file).setEnabled(true);
-                findViewById(R.id.recognize_mic).setEnabled(true);
-                findViewById(R.id.pause).setEnabled((false));
+                ((Button) findViewById(R.id.btnMic)).setText(R.string.recognize_microphone);
+                findViewById(R.id.btnFile).setEnabled(true);
+                findViewById(R.id.btnMic).setEnabled(true);
+                findViewById(R.id.btnPause).setEnabled((false));
                 break;
             case STATE_DONE:
-                ((Button) findViewById(R.id.recognize_file)).setText(R.string.recognize_file);
-                ((Button) findViewById(R.id.recognize_mic)).setText(R.string.recognize_microphone);
-                findViewById(R.id.recognize_file).setEnabled(true);
-                findViewById(R.id.recognize_mic).setEnabled(true);
-                findViewById(R.id.pause).setEnabled((false));
+                ((Button) findViewById(R.id.btnFile)).setText(R.string.recognize_file);
+                ((Button) findViewById(R.id.btnMic)).setText(R.string.recognize_microphone);
+                findViewById(R.id.btnFile).setEnabled(true);
+                findViewById(R.id.btnMic).setEnabled(true);
+                findViewById(R.id.btnPause).setEnabled((false));
                 findViewById(R.id.spinner).setEnabled((true));
                 break;
             case STATE_FILE:
-                ((Button) findViewById(R.id.recognize_file)).setText(R.string.stop_file);
+                ((Button) findViewById(R.id.btnFile)).setText(R.string.stop_file);
                 resultView.setText(getString(R.string.starting));
-                findViewById(R.id.recognize_mic).setEnabled(false);
-                findViewById(R.id.recognize_file).setEnabled(true);
-                findViewById(R.id.pause).setEnabled((false));
+                findViewById(R.id.btnMic).setEnabled(false);
+                findViewById(R.id.btnFile).setEnabled(true);
+                findViewById(R.id.btnPause).setEnabled((false));
                 findViewById(R.id.spinner).setEnabled((false));
                 break;
             case STATE_MIC:
-                ((Button) findViewById(R.id.recognize_mic)).setText(R.string.stop_microphone);
+                ((Button) findViewById(R.id.btnMic)).setText(R.string.stop_microphone);
                 resultView.setText(getString(R.string.say_something));
-                findViewById(R.id.recognize_file).setEnabled(false);
-                findViewById(R.id.recognize_mic).setEnabled(true);
-                findViewById(R.id.pause).setEnabled((true));
+                findViewById(R.id.btnFile).setEnabled(false);
+                findViewById(R.id.btnMic).setEnabled(true);
+                findViewById(R.id.btnPause).setEnabled((true));
                 findViewById(R.id.spinner).setEnabled((false));
                 break;
             default:
@@ -210,9 +200,9 @@ public class VoskActivity extends Activity implements
 
     private void setErrorState(String message) {
         resultView.setText(message);
-        ((Button) findViewById(R.id.recognize_mic)).setText(R.string.recognize_microphone);
-        findViewById(R.id.recognize_file).setEnabled(false);
-        findViewById(R.id.recognize_mic).setEnabled(false);
+        ((Button) findViewById(R.id.btnMic)).setText(R.string.recognize_microphone);
+        findViewById(R.id.btnFile).setEnabled(false);
+        findViewById(R.id.btnMic).setEnabled(false);
     }
 
     private void recognizeFile() {
@@ -280,7 +270,7 @@ public class VoskActivity extends Activity implements
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(this, MODELS[position]+" chosen", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, MODELS[position]+" selected", Toast.LENGTH_LONG).show();
         modelName = MODELS[position];
         initModel();
         setUiState(STATE_START);
