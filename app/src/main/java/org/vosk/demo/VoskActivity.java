@@ -16,9 +16,7 @@ package org.vosk.demo;
 
 import static org.vosk.demo.SrActivityState.*;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -42,10 +40,6 @@ import org.vosk.android.StorageService;
 import java.io.IOException;
 import java.io.InputStream;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 public class VoskActivity extends Activity implements
         RecognitionListener, AdapterView.OnItemSelectedListener {
 
@@ -54,7 +48,7 @@ public class VoskActivity extends Activity implements
 
     private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15", "vosk-model-en-us-0.22-lgraph", "vosk-model-small-en-us-zamia-0.5"};
 
-    private String modelName = "model-en-us";
+    private String selectedModelName = "model-en-us";
     private Model model;
     private SpeechService speechService;
     private SpeechStreamService speechStreamService;
@@ -85,7 +79,7 @@ public class VoskActivity extends Activity implements
     }
 
     private void initModel() {
-        StorageService.unpack(this, modelName, "model",
+        StorageService.unpack(this, selectedModelName, "model",
                 (model) -> {
                     this.model = model;
                     setUiState(STATE_READY);
@@ -271,7 +265,7 @@ public class VoskActivity extends Activity implements
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(this, MODELS[position]+" selected", Toast.LENGTH_LONG).show();
-        modelName = MODELS[position];
+        selectedModelName = MODELS[position];
         initModel();
         setUiState(STATE_START);
     }
