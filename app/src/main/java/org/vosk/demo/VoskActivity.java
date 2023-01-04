@@ -119,6 +119,7 @@ public class VoskActivity extends Activity implements
     @Override
     public void onResult(String hypothesis) {
         resultView.append(hypothesis + "\n");
+        resultView.append("THE JSON: "+SpeechToJson.getInstance().getJsonString(hypothesis) + "\n");
     }
 
     @Override
