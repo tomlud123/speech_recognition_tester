@@ -43,10 +43,8 @@ import java.io.InputStream;
 public class VoskActivity extends Activity implements
         RecognitionListener, AdapterView.OnItemSelectedListener {
 
-    /* Used to handle permission request */
-    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
-
-    private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15", "vosk-model-en-us-0.22-lgraph", "vosk-model-small-en-us-zamia-0.5"};
+    private String[] MODELS = {"model-en-us", "vosk-model-small-de-0.15"};
+//            "vosk-model-en-us-0.22-lgraph", "vosk-model-small-en-us-zamia-0.5"};
 
     private String selectedModelName = "model-en-us";
     private Model model;
@@ -214,6 +212,7 @@ public class VoskActivity extends Activity implements
 
                 InputStream ais = getAssets().open(
                         "10001-90210-01803.wav");
+//                        "13579.wav");
                 if (ais.skip(44) != 44) throw new IOException("File too short");
 
                 speechStreamService = new SpeechStreamService(rec, ais, 16000);

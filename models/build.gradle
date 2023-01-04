@@ -23,21 +23,21 @@ tasks.register('genUUID') {
     def uuid2 = UUID.randomUUID().toString()
     def odir2 = file("$buildDir/generated/assets/vosk-model-small-de-0.15")
     def ofile2 = file("$odir2/uuid")
-    def uuid3 = UUID.randomUUID().toString()
-    def odir3 = file("$buildDir/generated/assets/vosk-model-small-de-0.15")
-    def ofile3 = file("$odir3/uuid")
-    def uuid4 = UUID.randomUUID().toString()
-    def odir4 = file("$buildDir/generated/assets/vosk-model-small-en-us-zamia-0.5")
-    def ofile4 = file("$odir4/uuid")
+//    def uuid3 = UUID.randomUUID().toString()
+//    def odir3 = file("$buildDir/generated/assets/vosk-model-small-de-0.15")
+//    def ofile3 = file("$odir3/uuid")
+//    def uuid4 = UUID.randomUUID().toString()
+//    def odir4 = file("$buildDir/generated/assets/vosk-model-small-en-us-zamia-0.5")
+//    def ofile4 = file("$odir4/uuid")
     doLast {
         mkdir odir
         ofile.text = uuid
         mkdir odir2
         ofile2.text = uuid2
-        mkdir odir3
-        ofile3.text = uuid3
-        mkdir odir4
-        ofile4.text = uuid4
+//        mkdir odir3
+//        ofile3.text = uuid3
+//        mkdir odir4
+//        ofile4.text = uuid4
     }
 }
 
