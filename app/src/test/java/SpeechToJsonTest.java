@@ -6,7 +6,12 @@ public class SpeechToJsonTest {
 
     @org.junit.Test
     public void getJsonString() {
-        String spokenTxt = "OK blablabla.";
+
+        String spokenTxt = "blablabla.";
+        assertEquals("",
+                SpeechToJson.getInstance().getJsonString(spokenTxt));
+
+        spokenTxt = "OK Glasses, blablabla.";
         assertEquals("{\"type\": \"\",\"content\": \"\"}",
                 SpeechToJson.getInstance().getJsonString(spokenTxt));
 
@@ -31,10 +36,39 @@ public class SpeechToJsonTest {
         assertEquals("{\"type\": \"REQUEST_DATA\",\"content\": \"temperature\"}",
                 SpeechToJson.getInstance().getJsonString(spokenTxt));
 
-        spokenTxt = "OK Glasses, show pulse."; //fails
+        spokenTxt = "OK Glasses, show pulse.";
         assertEquals("{\"type\": \"REQUEST_DATA\",\"content\": \"pulse\"}",
                 SpeechToJson.getInstance().getJsonString(spokenTxt));
 
-        //TODO: fix and fill more examples
+        //Testcase U07.1
+
+        spokenTxt = "OK Glasses, set note patient james does feels ill, end note.";
+        assertEquals("{\"type\": \"PROTOCOL\",\"content\": \"patient james does feels ill\"}",
+                SpeechToJson.getInstance().getJsonString(spokenTxt));
+
+        spokenTxt = "OK Glasses, set note patient james does feels ill.";
+        assertEquals("{\"type\": \"PROTOCOL\",\"content\": \"patient james does feels ill\"}",
+                SpeechToJson.getInstance().getJsonString(spokenTxt));
+
+        //Testcase U07.2/08
+
+        spokenTxt = "OK Glasses, set medication three hundered millilitres fresh water, end medication.";
+        assertEquals("{\"type\": \"MEDICATION\",\"content\": \"three hundered millilitres fresh water\"}",
+                SpeechToJson.getInstance().getJsonString(spokenTxt));
+
+        spokenTxt = "OK Glasses, set medication bla bla.";
+        assertEquals("{\"type\": \"MEDICATION\",\"content\": \"bla bla\"}",
+                SpeechToJson.getInstance().getJsonString(spokenTxt));
+
+        spokenTxt = "OK Glasses, set medication two hundered millilitres fresh water at eleven o'clock, end medication\n.";
+        assertEquals("{\"type\": \"MEDICATION\",\"content\": \"two hundered millilitres fresh water\",\"time\": \"eleven o'clock\"}",
+                SpeechToJson.getInstance().getJsonString(spokenTxt));
+
+        //U09
+
+        spokenTxt = "OK Glasses, show pulse of last three days.";
+        String resp = SpeechToJson.getInstance().getJsonString(spokenTxt);
+        assertEquals("{\"type\": \"REQUEST_DATA\",\"content\": \"pulse\",\"interval\": \"three days\"}",
+                resp);
     }
 }

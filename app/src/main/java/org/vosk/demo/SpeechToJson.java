@@ -1,5 +1,7 @@
 package org.vosk.demo;
 
+import java.util.Locale;
+
 public class SpeechToJson {
 
     private static SpeechToJson instance;
@@ -20,6 +22,12 @@ public class SpeechToJson {
         String time = "";
         String interval = "";
 
+        spokenText = spokenText.replace(".", "").toLowerCase(Locale.ROOT);
+
+        if (!spokenText.contains("ok glasses")){
+            return "";
+        }
+
         if (spokenText.contains("stop frame")) {
             type = "GLASSES_COMMAND";
             content = "STOP_FRAME";
@@ -32,25 +40,38 @@ public class SpeechToJson {
         } else if (spokenText.contains("stop session")) {
             type = "GLASSES_COMMAND";
             content = "STOP_SESSION";
-        } else if (spokenText.contains("show temperature")) {
+        } else if (spokenText.contains("show")) {
             type = "REQUEST_DATA";
-            content = "temperature";
-        } else if (spokenText.contains("show blood pressure")) {
-            type = "REQUEST_DATA";
-            content = "blood pressure";
+            if (spokenText.contains(" of last")){
+                content = spokenText.substring(spokenText.indexOf("show") + 5, spokenText.indexOf(" of last"));
+                interval = spokenText.substring(spokenText.indexOf("last") + 5);
+            } else {
+                content = spokenText.substring(spokenText.indexOf("show") + 5);
+            }
         } else if (spokenText.contains("set note")) {
             type = "PROTOCOL";
-            content = spokenText.substring(spokenText.indexOf("note") + 5, spokenText.indexOf("end note"));
+            if (spokenText.contains("end note")) {
+                content = spokenText.substring(spokenText.indexOf("note") + 5, spokenText.indexOf("end note") - 2);
+            } else {
+                content = spokenText.substring(spokenText.indexOf("note") + 5);
+            }
         } else if (spokenText.contains("set medication")) {
             type = "MEDICATION";
-            content = spokenText.substring(spokenText.indexOf("medication") + 10, spokenText.indexOf("end medication"));
-            if (spokenText.contains("at")) {
-                time = spokenText.substring(spokenText.indexOf("at") + 3, spokenText.indexOf("end medication"));
+            if (spokenText.contains("end medication")) {
+                if (spokenText.contains(" at ")) {
+                    content = spokenText.substring(spokenText.indexOf("set medication") + 15, spokenText.indexOf(" at "));
+                    time = spokenText.substring(spokenText.indexOf(" at ") + 4, spokenText.indexOf("end medication") - 2);
+                } else {
+                    content = spokenText.substring(spokenText.indexOf("set medication") + 15, spokenText.indexOf("end medication") - 2);
+                }
+            } else {
+                if (spokenText.contains(" at ")) {
+                    content = spokenText.substring(spokenText.indexOf("set medication") + 15, spokenText.indexOf(" at "));
+                    time = spokenText.substring(spokenText.indexOf(" at ") + 4);
+                } else{
+                    content = spokenText.substring(spokenText.indexOf("set medication") + 15);
+                }
             }
-        } else if (spokenText.contains("show temperature of last")) {
-            type = "REQUEST_DATA";
-            content = "temperature";
-            interval = spokenText.substring(spokenText.indexOf("last") + 5);
         }
 
         String jsonString = "{";
