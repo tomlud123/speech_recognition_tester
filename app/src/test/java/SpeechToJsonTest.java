@@ -8,7 +8,7 @@ public class SpeechToJsonTest {
     public void getJsonString() {
 
         String spokenTxt = "blablabla.";
-        assertEquals("",
+        assertEquals("not trigerred",
                 SpeechToJson.getInstance().getJsonString(spokenTxt));
 
         spokenTxt = "OK Glasses, blablabla.";

@@ -118,8 +118,10 @@ public class VoskActivity extends Activity implements
 
     @Override
     public void onResult(String hypothesis) {
-        resultView.append(hypothesis + "\n");
-        resultView.append("THE JSON: "+SpeechToJson.getInstance().getJsonString(hypothesis) + "\n");
+//        resultView.append(hypothesis + "\n");
+        String text = hypothesis.substring(hypothesis.indexOf("text")+7, hypothesis.indexOf("}")-1);
+        resultView.append("Recognized speech: " + text + "\n");
+        resultView.append("JSON output: "+SpeechToJson.getInstance().getJsonString(text) + "\n\n");
     }
 
     @Override
@@ -133,7 +135,7 @@ public class VoskActivity extends Activity implements
 
     @Override
     public void onPartialResult(String hypothesis) {
-        resultView.append(hypothesis + "\n");
+        //resultView.append(hypothesis + "\n");
     }
 
     @Override
